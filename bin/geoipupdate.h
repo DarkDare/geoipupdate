@@ -29,6 +29,7 @@ typedef struct {
     char * proxy;               // 1.2.3.4, 1.2.3.4:1234
     char * proxy_user_password; // user:pwd
     int verbose;
+    int keepalive;
 
 } geoipupdate_s;
 

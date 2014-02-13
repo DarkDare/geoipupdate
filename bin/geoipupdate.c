@@ -254,6 +254,12 @@ int parse_license_file(geoipupdate_s * up)
                             "ProxyUserPassword must be defined xyz:abc\n");
                 free(up->proxy_user_password);
                 up->proxy_user_password = strdup(p);
+            } else if (!strcmp(p, "Keepalive")) {
+                p = strtok_r(NULL, sep, &last);
+                exit_unless(p != NULL
+                            && (!strcmp(p, "0") || !strcmp(p, "1")),
+                            "Keepalive must be 0 or 1\n");
+                up->keepalive = atoi(p);
             } else {
                 say_if(up->verbose, "Skip unknown directive: %s\n", p);
             }
@@ -303,6 +309,7 @@ static void common_req(CURL * curl, geoipupdate_s * gu)
 {
     curl_easy_setopt(curl, CURLOPT_USERAGENT, GEOIP_USERAGENT);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, gu->keepalive);
     if (!strcasecmp(gu->proto, "https")) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER,
                          gu->skip_peer_verification != 0);
